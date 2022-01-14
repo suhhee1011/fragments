@@ -1,6 +1,6 @@
 {
   "name": "fragments",
-  "private":true,
+  "private": true,
   "version": "0.0.1",
   "description": "Fragments back-end API for Winter 2022",
   "engines": {
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/suhhee1011/fragments/issues"
   },
-  "homepage": "https://github.com/suhhee1011/fragments#readme"
+  "homepage": "https://github.com/suhhee1011/fragments#readme",
+  "devDependencies": {
+    "prettier": "2.5.1"
+  }
 }
