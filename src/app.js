@@ -7,7 +7,7 @@ const compression = require('compression');
 const passport = require('passport');
 
 // Version from our package.json file
-const { version } = require('../package.json');
+//const { version } = require('../package.json');
 
 const logger = require('./logger');
 const pino = require('pino-http')({
