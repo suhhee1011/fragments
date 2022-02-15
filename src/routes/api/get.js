@@ -16,9 +16,14 @@ const getBasic = (req, res) => {
 const getId = async (req, res) => {
   // TODO: this is just a placeholder to get something working...
   const idExt = req.params.id.split('.');
+  var metaDataFragment;
+  var fragment;
   const returnedFragment = await readFragmentData(req.user, idExt[0]);
-  const metaDataFragment = await readFragment(req.user, idExt[0]);
-  const fragment = new Fragment(metaDataFragment);
+  if (returnedFragment) {
+    metaDataFragment = await readFragment(req.user, idExt[0]);
+    fragment = new Fragment(metaDataFragment);
+  }
+  console.log(returnedFragment);
   if (idExt[1]) {
     const ext = mime.lookup(idExt[1]);
     if (fragment.formats.includes(ext)) {

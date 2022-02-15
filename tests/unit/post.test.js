@@ -1,4 +1,4 @@
-// tests/unit/get.test.js
+// tests/unit/post.test.js
 
 const request = require('supertest');
 
@@ -30,7 +30,6 @@ describe('POST /v1/fragments', () => {
       .auth('user1@email.com', 'password1')
       .set('Content-Type', 'application/json')
       .send('Hi, This is test');
-    console.log(res.body);
     expect(res.status).toBe(415);
     expect(res.body.status).toBe('error');
   });

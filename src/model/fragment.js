@@ -123,7 +123,7 @@ class Fragment {
    * @returns {Array<string>} list of supported mime types
    */
   get formats() {
-    if (this.type == 'text/plain') {
+    if (this.type == 'text/plain' || this.type == 'text/plain; charset=utf-8') {
       return ['text/plain'];
     }
     return [];

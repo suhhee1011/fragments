@@ -20,5 +20,21 @@ describe('GET /v1/fragments', () => {
     expect(Array.isArray(res.body.fragments)).toBe(true);
   });
 
-  // TODO: we'll need to add tests to check the contents of the fragments array later
+  test('Authenticated requests of post and get/:id', async () => {
+    const postRes = await request(app)
+      .post('/v1/fragments')
+      .auth('user1@email.com', 'password1')
+      .set('Content-Type', 'text/plain')
+      .send('Hi, This is test');
+
+    const getRes = await request(app)
+      .get('/v1/fragments/' + postRes.body.fragment.id)
+      .auth('user1@email.com', 'password1');
+    expect(getRes.statusCode).toBe(200);
+  });
+
+  test('authenticated requests get with wrong id', async () => {
+    const res = await request(app).get('/v1/fragments/123').auth('user1@email.com', 'password1');
+    expect(res.statusCode).toBe(404);
+  });
 });
