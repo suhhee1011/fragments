@@ -125,6 +125,8 @@ class Fragment {
   get formats() {
     if (this.type == 'text/plain' || this.type == 'text/plain; charset=utf-8') {
       return ['text/plain'];
+    } else if (this.type == 'application/json' || this.type == 'application/json; charset=utf-8') {
+      return ['application/txt', 'text/plain'];
     }
     return [];
   }
@@ -135,7 +137,19 @@ class Fragment {
    * @returns {boolean} true if we support this Content-Type (i.e., type/subtype)
    */
   static isSupportedType(value) {
-    return value == 'text/plain' || value == 'text/plain; charset=utf-8';
+    const typeArr = [
+      'text/plain',
+      'text/plain; charset=utf-8',
+      'application/txt',
+      'application/json',
+      'application/json; charset=utf-8',
+    ];
+    for (let val of typeArr) {
+      if (val == value) {
+        return true;
+      }
+    }
+    return false;
   }
 }
 
