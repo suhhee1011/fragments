@@ -55,5 +55,5 @@ CMD curl --fail localhost:8080 || exit 1
 USER node
 
 # Run the server
-CMD npm start
+CMD ["npm", "start"]
   
