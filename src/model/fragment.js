@@ -95,7 +95,7 @@ class Fragment {
     if (!data) {
       throw new Error('No Buffer');
     }
-    this.save();
+    await this.save();
     this.size = Buffer.byteLength(data);
     return writeFragmentData(this.ownerId, this.id, data);
   }
@@ -125,8 +125,12 @@ class Fragment {
   get formats() {
     if (this.type == 'text/plain' || this.type == 'text/plain; charset=utf-8') {
       return ['text/plain'];
-    } else if (this.type == 'application/json' || this.type == 'application/json; charset=utf-8') {
-      return ['application/txt', 'text/plain'];
+    } else if (this.type == 'application/json' || this.type == 'text/plain; charset=utf-8') {
+      return ['application/json'];
+    } else if (this.type == 'text/markdown') {
+      return ['text/markdown', 'text/html', 'text/plain'];
+    } else if (this.type == 'text/html') {
+      return ['text/html', 'text/plain'];
     }
     return [];
   }
@@ -140,11 +144,14 @@ class Fragment {
     const typeArr = [
       'text/plain',
       'text/plain; charset=utf-8',
+      'text/markdown',
+      'text/html',
       'application/txt',
       'application/json',
       'application/json; charset=utf-8',
     ];
     for (let val of typeArr) {
+      console.log(val);
       if (val == value) {
         return true;
       }
