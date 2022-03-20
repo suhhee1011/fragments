@@ -15,7 +15,6 @@ var md = require('markdown-it')({
 
 const getAllFragment = async (req, res) => {
   logger.debug(req.query.expand);
-
   if (req.query.expand === '1') {
     logger.debug('In expand 1');
     try {
@@ -35,47 +34,27 @@ const getAllFragment = async (req, res) => {
     }
   }
 };
-
-/**
- * Get a list of fragments for the current user
- */
+//Get a list of fragments for the current user
 const getBasic = (req, res) => {
-  // TODO: this is just a placeholder to get something working...
-  const returnedFragment = listFragments(req.user, false);
-  // req.query.expand
-  if (returnedFragment) {
-    res.setHeader('Content-Type', metaDataFragment.type);
-    res.setHeader('Content-Length', metaDataFragment.size);
-    res.status(200).send(returnedFragment);
-  } else {
-    const data = { fragments: [] };
-    const successResponse = createSuccessResponse(data);
-    res.status(200).json(successResponse);
-  }
-
-  var metaDataFragment;
-  // var fragment;
-
-  // if (returnedFragment) {
-  //   metaDataFragment = await readFragment(req.user, idExt[0]);
-  //   fragment = new Fragment(metaDataFragment);
-  // }
-
-  logger.debug({ hash: req.user }, 'getAllFragment');
-  if (!returnedFragment) {
+  try {
+    var metaDataFragment;
+    const returnedFragment = listFragments(req.user, false);
+    if (returnedFragment) {
+      res.setHeader('Content-Type', metaDataFragment.type);
+      res.setHeader('Content-Length', metaDataFragment.size);
+      res.status(200).send(returnedFragment);
+    } else {
+      const data = { fragments: [] };
+      const successResponse = createSuccessResponse(data);
+      res.status(200).json(successResponse);
+    }
+  } catch {
     const errorResponse = createErrorResponse(404, 'not found');
     res.status(404).json(errorResponse);
-  } else {
-    res.setHeader('Content-Type', metaDataFragment.type);
-    res.setHeader('Content-Length', metaDataFragment.size);
-    res.status(200).send(returnedFragment);
   }
 };
-
 const getId = async (req, res) => {
-  // TODO: this is just a placeholder to get something working...
   const idExt = path.parse(req.params.id);
-
   var metaDataFragment;
   var fragment;
   let returnedFragment = await readFragmentData(req.user, idExt.name);
@@ -98,12 +77,10 @@ const getId = async (req, res) => {
         logger.debug(returnedFragment);
       }
     } else {
-      //text/plain
       const errorResponse = createErrorResponse(415, 'Invalid extension');
       return res.status(415).json(errorResponse);
     }
   }
-
   res.setHeader('Content-Type', metaDataFragment.type);
   res.setHeader('Content-Length', metaDataFragment.size);
   res.status(200).send(returnedFragment);

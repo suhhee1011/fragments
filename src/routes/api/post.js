@@ -7,13 +7,7 @@ const API_URL = process.env.API_URL;
  * Get a list of fragments for the current user
  */
 module.exports = async (req, res) => {
-  // TODO: this is just a placeholder to get something working...
   if (Buffer.isBuffer(req.body)) {
-    //if (req.body) {
-    // const fragment = new Fragment();
-    // if (!Buffer.isBuffer(req.body)) {
-    //   req.body = new Buffer.from(req.body.toString());
-    // }
     try {
       const fragment = new Fragment({
         ownerId: req.user,
