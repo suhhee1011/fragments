@@ -34,25 +34,7 @@ const getAllFragment = async (req, res) => {
     }
   }
 };
-//Get a list of fragments for the current user
-const getBasic = (req, res) => {
-  try {
-    var metaDataFragment;
-    const returnedFragment = listFragments(req.user, false);
-    if (returnedFragment) {
-      res.setHeader('Content-Type', metaDataFragment.type);
-      res.setHeader('Content-Length', metaDataFragment.size);
-      res.status(200).send(returnedFragment);
-    } else {
-      const data = { fragments: [] };
-      const successResponse = createSuccessResponse(data);
-      res.status(200).json(successResponse);
-    }
-  } catch {
-    const errorResponse = createErrorResponse(404, 'not found');
-    res.status(404).json(errorResponse);
-  }
-};
+
 const getId = async (req, res) => {
   const idExt = path.parse(req.params.id);
   var metaDataFragment;
@@ -95,4 +77,4 @@ const getInfo = async (req, res) => {
   }
 };
 
-module.exports = { getBasic, getId, getAllFragment, getInfo };
+module.exports = { getId, getAllFragment, getInfo };
