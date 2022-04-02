@@ -15,6 +15,6 @@ services:
       - AWS_COGNITO_POOL_ID
       - AWS_COGNITO_CLIENT_ID
       # We'll typically want to use Cognito, but we can pass this instead for testing
-      - HTPASSWD
+      # - HTPASSWD_FILE
       # The S3 Bucket to use, default to `fragments` if missing
       - AWS_S3_BUCKET_NAME=${AWS_S3_BUCKET_NAME:-fragments}
