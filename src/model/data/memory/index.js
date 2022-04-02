@@ -1,4 +1,5 @@
-const MemoryDB = require('./memory-db');
+// XXX: temporary use of memory-db until we add DynamoDB
+const MemoryDB = require('../memory/memory-db');
 
 // Create two in-memory databases: one for fragment metadata and the other for raw data
 const data = new MemoryDB();
