@@ -2,7 +2,7 @@
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
-// const API_URL = process.env.API_URL;
+const API_URL = process.env.API_URL;
 /**
  * Get a list of fragments for the current user
  */
@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
       logger.debug(fragment);
       await fragment.save();
       await fragment.setData(req.body);
-      res.setHeader('Location', `${req.headers['host']}/v1/fragments/${fragment.id}`);
+      res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);
       const successResponse = createSuccessResponse({ fragment });
       res.status(201).json(successResponse);
     } catch {
