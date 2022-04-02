@@ -15,7 +15,7 @@ describe('POST /v1/fragments', () => {
     expect(res.statusCode).toBe(201);
     expect(res.body.status).toBe('ok');
     expect(res.body.fragment.type).toBe('text/plain');
-    expect(res.header.location).toBe(`http://${API_URL}/v1/fragments/${res.body.fragment.id}`);
+    expect(res.header.location).toBe(`${API_URL}/v1/fragments/${res.body.fragment.id}`);
   });
   test('unauthenticated requests are denied', async () => {
     const res = await request(app)
