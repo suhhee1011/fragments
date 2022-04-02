@@ -19,6 +19,7 @@ function readFragment(ownerId, id) {
 // Writes a fragment's data to an S3 Object in a Bucket
 // https://github.com/awsdocs/aws-sdk-for-javascript-v3/blob/main/doc_source/s3-example-creating-buckets.md#upload-an-existing-object-to-an-amazon-s3-bucket
 async function writeFragmentData(ownerId, id, data) {
+  logger.debug('post-entered in S3');
   // Create the PUT API params from our details
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
