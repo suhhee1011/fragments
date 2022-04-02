@@ -1,6 +1,6 @@
 // src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
-const { deleteFragment } = require('../../../src/model/data/memory/index');
+const { deleteFragment } = require('../../../src/model/data/index');
 // const { Fragment } = require('../../../src/model/fragment');
 
 const path = require('path');

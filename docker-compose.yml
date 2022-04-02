@@ -8,12 +8,12 @@ services:
     environment:
       - NODE_ENV=production
       # Use whatever LOG_LEVEL is set to, or `info` as a default if not set
-      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
       # Default to use `us-east-1`, which will also pick the AWS data backend
       - AWS_REGION=us-east-1
       # Allow the following variables to be forwarded into the container from the env if set
-      - AWS_COGNITO_POOL_ID
-      - AWS_COGNITO_CLIENT_ID
+      - AWS_COGNITO_POOL_ID=us-east-1_lGoXYivnI
+      - AWS_COGNITO_CLIENT_ID=67o3ro0sqn19gnil5mq70ip8n6
       # We'll typically want to use Cognito, but we can pass this instead for testing
       # - HTPASSWD_FILE
       # The S3 Bucket to use, default to `fragments` if missing
