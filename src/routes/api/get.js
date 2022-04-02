@@ -1,10 +1,6 @@
 // src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
-const {
-  readFragmentData,
-  readFragment,
-  listFragments,
-} = require('../../../src/model/data/memory/index');
+const { readFragmentData, readFragment } = require('../../../src/model/data/memory/index');
 const { Fragment } = require('../../../src/model/fragment');
 const logger = require('../../logger');
 var mime = require('mime-types');
