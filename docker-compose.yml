@@ -13,6 +13,7 @@ services:
       - AWS_REGION=us-east-1
       # Allow the following variables to be forwarded into the container from the env if set
       - AWS_COGNITO_POOL_ID
+
       - AWS_COGNITO_CLIENT_ID
       # We'll typically want to use Cognito, but we can pass this instead for testing
       - HTPASSWD

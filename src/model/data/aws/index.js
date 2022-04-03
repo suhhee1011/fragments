@@ -1,4 +1,4 @@
-const MemoryDB = require('./memory-db');
+const MemoryDB = require('../memory/memory-db');
 const s3Client = require('./s3Client');
 const logger = require('../../../logger');
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
