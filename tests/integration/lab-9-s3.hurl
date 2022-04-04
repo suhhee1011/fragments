@@ -34,6 +34,7 @@ jsonpath "$.fragment.size" == 9
 url: header "Location"
 
 # 3. GET the fragment you just created using the url as an authorized user.
+
 GET {{url}}
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 # 4. Confirm that the server returns a 200, that the type of the fragment is text/plain, and that the body is equal to Hello S3!
@@ -53,6 +54,16 @@ HTTP/1.1 200
 # 7. Try to GET the fragment again using the url as an authorized user.
 GET {{url}}
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
-# 8. Confirm that the server returns a 404, since the fragment should be deleted.
+
+# We should get back an HTTP 1.1 404 response
 HTTP/1.1 404
 
+
+# Extra checks to perform against the response
+[Asserts]
+# We expect to get back a JSON response with { "status": "error", ... }
+jsonpath "$.status" == "error"
+# We expect to get back a JSON response with { ..., "error":{"code":..., ...}}
+jsonpath "$.error.code" == 404
+# We expect to get back a JSON response with { ..., "error":{... , "message":"..."}}
+jsonpath "$.error.message" == "not found"

@@ -1,6 +1,7 @@
 const MemoryDB = require('../memory/memory-db');
 const s3Client = require('./s3Client');
 const logger = require('../../../logger');
+const { createErrorResponse } = require('../../../../src/response');
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
 // Create two in-memory databases: one for fragment metadata and the other for raw data
 // const data = new MemoryDB();
@@ -27,7 +28,6 @@ async function writeFragmentData(ownerId, id, data) {
     Key: `${ownerId}/${id}`,
     Body: data,
   };
-
   // Create a PUT Object command to send to S3
   const command = new PutObjectCommand(params);
 
@@ -66,6 +66,9 @@ const streamToBuffer = (stream) =>
 // Reads a fragment's data from S3 and returns (Promise<Buffer>)
 // https://github.com/awsdocs/aws-sdk-for-javascript-v3/blob/main/doc_source/s3-example-creating-buckets.md#getting-a-file-from-an-amazon-s3-bucket
 async function readFragmentData(ownerId, id) {
+  logger.debug('get-entered in S3');
+  logger.debug(ownerId);
+  logger.debug(id);
   // Create the PUT API params from our details
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -77,14 +80,21 @@ async function readFragmentData(ownerId, id) {
   const command = new GetObjectCommand(params);
 
   try {
+    logger.debug('I am here!!');
     // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
     const data = await s3Client.send(command);
     // Convert the ReadableStream to a Buffer
+    logger.debug('I am here too!!');
     return streamToBuffer(data.Body);
   } catch (err) {
-    const { Bucket, Key } = params;
-    logger.error({ err, Bucket, Key }, 'Error streaming fragment data from S3');
-    throw new Error('unable to read fragment data');
+    if (err.Code == 'NoSuchKey') {
+      const data = createErrorResponse(404, 'not found');
+      return data.Body;
+    } else {
+      const { Bucket, Key } = params;
+      logger.error({ err, Bucket, Key }, 'Error streaming fragment data from S3');
+      throw new Error('unable to read fragment data');
+    }
   }
 }
 
@@ -126,9 +136,9 @@ async function deleteFragment(ownerId, id, data) {
   }
 }
 
-module.exports.listFragments = listFragments;
 module.exports.writeFragment = writeFragment;
 module.exports.readFragment = readFragment;
+module.exports.listFragments = listFragments;
 module.exports.writeFragmentData = writeFragmentData;
 module.exports.readFragmentData = readFragmentData;
 module.exports.deleteFragment = deleteFragment;

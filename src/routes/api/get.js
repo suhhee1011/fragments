@@ -1,6 +1,6 @@
 // src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
-const { readFragmentData, readFragment } = require('../../../src/model/data/memory/index');
+const { readFragmentData, readFragment } = require('../../../src/model/data/index');
 const { Fragment } = require('../../../src/model/fragment');
 const logger = require('../../logger');
 var mime = require('mime-types');
@@ -32,10 +32,13 @@ const getAllFragment = async (req, res) => {
 };
 
 const getId = async (req, res) => {
+  logger.debug('getID entered');
   const idExt = path.parse(req.params.id);
   var metaDataFragment;
   var fragment;
+  logger.debug('before returnFragment ');
   let returnedFragment = await readFragmentData(req.user, idExt.name);
+  logger.debug('After returnFragment ');
   if (returnedFragment) {
     metaDataFragment = await readFragment(req.user, idExt.name);
     fragment = new Fragment(metaDataFragment);
