@@ -4,11 +4,15 @@ const { deleteFragment } = require('../../../src/model/data/index');
 // const { Fragment } = require('../../../src/model/fragment');
 
 const path = require('path');
+const logger = require('../../logger');
 
 const deleteById = async (req, res) => {
   const idExt = path.parse(req.params.id);
   try {
+    logger.debug('idExt: ', idExt);
+    logger.debug('idExt.name: ', idExt.name);
     await deleteFragment(req.user, idExt.name);
+
     const successResponse = createSuccessResponse('deleted');
     return res.status(200).json(successResponse);
   } catch {
