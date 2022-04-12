@@ -5,9 +5,12 @@ const { Fragment } = require('../../../src/model/fragment');
 const logger = require('../../logger');
 var mime = require('mime-types');
 const path = require('path');
-var md = require('markdown-it')({
-  html: true,
-});
+const { ListExportsCommand } = require('@aws-sdk/client-dynamodb');
+const { MetadataEntry } = require('@aws-sdk/client-s3');
+var md = require('markdown-it')({ html: true });
+const sharp = require('sharp');
+
+// const { markdownToTxt } = require('markdown-to-txt');
 
 const getAllFragment = async (req, res) => {
   logger.debug(req.query.expand);
@@ -30,40 +33,62 @@ const getAllFragment = async (req, res) => {
     }
   }
 };
+const convert = (type, idExt, returnedFragment) => {
+  const ext = mime.lookup(idExt.ext);
+  if (type == 'text/markdown' && ext == 'text/html') {
+    returnedFragment = md.render(returnedFragment.toString());
+  } else if (
+    (type == 'text/markdown' ||
+      type == 'text/html' ||
+      type == 'application/json' ||
+      type == 'text/html') &&
+    ext == 'text/html'
+  ) {
+    returnedFragment.type = 'text/plain';
+  } else if (
+    (type == 'image/png' || type == 'image/jpeg' || type == 'image/webp' || type == 'image/gif') &&
+    (ext == 'image/png' || ext == 'image/jpeg' || ext == 'image/webp' || ext == 'image/gif')
+  ) {
+    sharp(returnedFragment).toFile(`${returnedFragment.id}.${idExt.ext}`);
+  }
 
+  return returnedFragment;
+};
 const getId = async (req, res) => {
   logger.debug('getID entered');
+
+  let metaDataFragment;
   const idExt = path.parse(req.params.id);
-  var metaDataFragment;
-  var fragment;
-  logger.debug('before returnFragment ');
   let returnedFragment = await readFragmentData(req.user, idExt.name);
-  logger.debug('After returnFragment ');
+  logger.debug(returnedFragment.toString());
   if (returnedFragment) {
-    metaDataFragment = await readFragment(req.user, idExt.name);
-    fragment = new Fragment(metaDataFragment);
+    metaDataFragment = await Fragment.byId(req.user, idExt.name);
   } else {
     const errorResponse = createErrorResponse(404, 'not found');
     return res.status(404).json(errorResponse);
   }
-  logger.debug(idExt.ext);
-  logger.debug(returnedFragment.for);
+
   if (idExt.ext) {
     const ext = mime.lookup(idExt.ext);
+    logger.debug(metaDataFragment.formats);
     logger.debug(ext);
-    logger.debug(fragment);
-    if (fragment.formats.includes(ext)) {
-      if (fragment.type == 'text/markdown' && idExt.ext == '.html') {
-        returnedFragment = md.render(returnedFragment.toString());
-        logger.debug(returnedFragment);
-      }
+    if (metaDataFragment.formats.includes(ext)) {
+      returnedFragment = convert(metaDataFragment.type, ext, returnedFragment);
+      res.setHeader('Content-Type', ext);
     } else {
       const errorResponse = createErrorResponse(415, 'Invalid extension');
       return res.status(415).json(errorResponse);
     }
+  } else {
+    res.setHeader('Content-Type', metaDataFragment.type);
   }
-  res.setHeader('Content-Type', metaDataFragment.type);
+
   res.setHeader('Content-Length', metaDataFragment.size);
+  logger.debug('metaDataFragment.type');
+  logger.debug(metaDataFragment.type);
+  logger.debug('metaDataFragment.size');
+  logger.debug(metaDataFragment.size);
+
   res.status(200).send(returnedFragment);
 };
 const getInfo = async (req, res) => {

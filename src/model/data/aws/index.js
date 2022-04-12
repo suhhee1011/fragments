@@ -184,9 +184,7 @@ async function deleteFragment(ownerId, id) {
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
   };
-  logger.debug('params:', params);
-  logger.debug('message');
-  logger.debug({ params });
+
   // Create a PUT Object command to send to S3
   const S3command = new DeleteObjectCommand(param);
   const DyDBcommand = new DeleteCommand(params);

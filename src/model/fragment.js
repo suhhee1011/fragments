@@ -125,12 +125,19 @@ class Fragment {
   get formats() {
     if (this.type == 'text/plain' || this.type == 'text/plain; charset=utf-8') {
       return ['text/plain'];
-    } else if (this.type == 'application/json' || this.type == 'text/plain; charset=utf-8') {
-      return ['application/json'];
     } else if (this.type == 'text/markdown') {
       return ['text/markdown', 'text/html', 'text/plain'];
     } else if (this.type == 'text/html') {
       return ['text/html', 'text/plain'];
+    } else if (this.type == 'application/json' || this.type == 'application/json; charset=utf-8') {
+      return ['text/plain', 'application/json'];
+    } else if (
+      this.type == 'image/png' ||
+      this.type == 'image/jpg' ||
+      this.type == 'image/webp' ||
+      this.type == 'image/gif'
+    ) {
+      return ['image/png', 'image/jpg', 'image/webp', 'image/gif'];
     }
     return [];
   }
@@ -149,6 +156,10 @@ class Fragment {
       'application/txt',
       'application/json',
       'application/json; charset=utf-8',
+      'image/png',
+      'image/jpeg',
+      'image/webp',
+      'image/gif',
     ];
     for (let val of typeArr) {
       console.log(val);

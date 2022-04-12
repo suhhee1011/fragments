@@ -11,7 +11,6 @@ const express = require('express');
 const router = express.Router();
 const { getId, getInfo, getAllFragment } = require('./get');
 const { deleteById } = require('./delete');
-
 // Define our first route, which will be: GET /v1/fragments
 router.get('/fragments', getAllFragment);
 router.get('/fragments/:id', getId);
@@ -32,5 +31,6 @@ const rawBody = () =>
 
 // Use a raw body parser for POST, which will give a `Buffer` Object or `{}` at `req.body`
 router.post('/fragments', rawBody(), require('./post'));
+router.put('/fragments/:id', rawBody(), require('./put'));
 router.delete('/fragments/:id', deleteById);
 module.exports = router;
