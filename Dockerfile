@@ -30,7 +30,7 @@ RUN npm ci --only=production
 ###########################################################################
 #Stage2 - Deploy - Run and start server 
 FROM node:16.14-alpine@sha256:2c6c59cf4d34d4f937ddfcf33bab9d8bbad8658d1b9de7b97622566a52167f2b AS production
-RUN apk --no-cache add curl
+RUN apk --no-cache add curl=7.82.0
 WORKDIR /app
 
 
