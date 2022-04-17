@@ -1,12 +1,9 @@
 const { Fragment } = require('../../src/model/fragment');
 
-// Wait for a certain number of ms. Returns a Promise.
 const wait = async (ms = 100) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const validTypes = [
   `text/plain`,
-  /*
-   Currently, only text/plain is supported. Others will be added later.
   `text/markdown`,
   `text/html`,
   `application/json`,
@@ -14,7 +11,6 @@ const validTypes = [
   `image/jpeg`,
   `image/webp`,
   `image/gif`,
-  */
 ];
 
 describe('Fragment class', () => {
@@ -145,7 +141,6 @@ describe('Fragment class', () => {
     });
 
     test.only('isText return expected results', () => {
-      // Text fragment
       const fragment = new Fragment({
         ownerId: '1234',
         type: 'text/plain; charset=utf-8',
@@ -224,7 +219,6 @@ describe('Fragment class', () => {
 
       expect(await Fragment.byUser(ownerId, true)).toEqual([fragment]);
     });
-    // This has bug with test case
     test.only('setData() throws if not give a Buffer', () => {
       const fragment = new Fragment({ ownerId: '123', type: 'text/plain', size: 0 });
       expect(() => fragment.setData()).rejects.toThrow();

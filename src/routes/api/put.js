@@ -2,29 +2,28 @@
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
-const { readFragmentData, readFragment } = require('../../../src/model/data/index');
 const API_URL = process.env.API_URL;
-const path = require('path');
 /**
  * Get a list of fragments for the current user
  */
 
 module.exports = async (req, res) => {
   try {
-    const metaDataFragment = await Fragment.byId(req.user, req.params.id);
-
+    let metaDataFragment = await Fragment.byId(req.user, req.params.id);
     logger.debug(req.headers['content-type']);
 
     if (metaDataFragment.type == req.headers['content-type']) {
       await metaDataFragment.setData(req.body);
 
-      // TODO: To confirm
-      // res.setHeader('Location', `${API_URL}/v1/fragments/${returnedFragment.id}`);
-      const successResponse = createSuccessResponse({
-        fragments: { metaDataFragment, formats: metaDataFragment.formats },
-      });
-      // res.setData('fragments', metaDataFragment.formats);
-      return res.status(200).json(successResponse);
+      const returnedFragment = await Fragment.byId(req.user, req.params.id);
+
+      res.setHeader('Location', `${API_URL}/v1/fragments/${req.params.id}`);
+
+      const fragType = returnedFragment.formats;
+
+      return res
+        .status(200)
+        .json(createSuccessResponse({ fragment: returnedFragment, type: fragType }));
     } else {
       return res
         .status(400)

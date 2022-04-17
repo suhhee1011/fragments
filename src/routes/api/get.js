@@ -1,42 +1,29 @@
 // src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
-const { readFragmentData, readFragment } = require('../../../src/model/data/index');
+const { readFragmentData } = require('../../../src/model/data/index');
 const { Fragment } = require('../../../src/model/fragment');
 const logger = require('../../logger');
 var mime = require('mime-types');
 const path = require('path');
-const { ListExportsCommand } = require('@aws-sdk/client-dynamodb');
-const { MetadataEntry } = require('@aws-sdk/client-s3');
 var md = require('markdown-it')({ html: true });
 const sharp = require('sharp');
-
-// const { markdownToTxt } = require('markdown-to-txt');
+const fs = require('fs');
 
 const getAllFragment = async (req, res) => {
   logger.debug(req.query.expand);
-  if (req.query.expand === '1') {
-    logger.debug('In expand 1');
-    try {
-      const returnedFragment = await Fragment.byUser(req.user, true);
-      return res.status(200).json(createSuccessResponse({ fragments: returnedFragment }));
-    } catch (err) {
-      const errorResponse = createErrorResponse(500, 'Internal error');
-      res.status(500).json(errorResponse);
-    }
-  } else {
-    try {
-      const returnedFragment = await Fragment.byUser(req.user, false);
-      return res.status(200).json(createSuccessResponse({ fragments: returnedFragment }));
-    } catch (err) {
-      const errorResponse = createErrorResponse(500, 'Internal error');
-      res.status(500).json(errorResponse);
-    }
+  let checkExpand = req.query.expand === '1' ? true : false;
+  try {
+    const returnedFragment = await Fragment.byUser(req.user, checkExpand);
+    return res.status(200).json(createSuccessResponse({ fragments: returnedFragment }));
+  } catch (err) {
+    const errorResponse = createErrorResponse(500, 'Internal error to get all fragment of user');
+    res.status(500).json(errorResponse);
   }
 };
-const convert = (type, idExt, returnedFragment) => {
-  const ext = mime.lookup(idExt.ext);
+const convert = (type, ext, returnedFragment) => {
   if (type == 'text/markdown' && ext == 'text/html') {
     returnedFragment = md.render(returnedFragment.toString());
+    returnedFragment.type = 'text/html';
   } else if (
     (type == 'text/markdown' ||
       type == 'text/html' ||
@@ -46,10 +33,22 @@ const convert = (type, idExt, returnedFragment) => {
   ) {
     returnedFragment.type = 'text/plain';
   } else if (
-    (type == 'image/png' || type == 'image/jpeg' || type == 'image/webp' || type == 'image/gif') &&
-    (ext == 'image/png' || ext == 'image/jpeg' || ext == 'image/webp' || ext == 'image/gif')
+    type == 'image/png' ||
+    type == 'image/jpeg' ||
+    type == 'image/webp' ||
+    type == 'image/gif'
   ) {
-    sharp(returnedFragment).toFile(`${returnedFragment.id}.${idExt.ext}`);
+    logger.debug(typeof returnedFragment);
+    if (ext == 'image/png') {
+      returnedFragment = sharp(returnedFragment).png().toBuffer();
+    } else if (ext == 'image/jpeg') {
+      returnedFragment = sharp(returnedFragment).jpeg().toBuffer();
+    } else if (ext == 'image/webp') {
+      returnedFragment = sharp(returnedFragment).webp().toBuffer();
+    } else if (ext == 'image/gif') {
+      returnedFragment = sharp(returnedFragment).gif().toBuffer();
+    }
+    returnedFragment.type = ext;
   }
 
   return returnedFragment;
@@ -60,7 +59,7 @@ const getId = async (req, res) => {
   let metaDataFragment;
   const idExt = path.parse(req.params.id);
   let returnedFragment = await readFragmentData(req.user, idExt.name);
-  logger.debug(returnedFragment.toString());
+
   if (returnedFragment) {
     metaDataFragment = await Fragment.byId(req.user, idExt.name);
   } else {
@@ -68,13 +67,14 @@ const getId = async (req, res) => {
     return res.status(404).json(errorResponse);
   }
 
-  if (idExt.ext) {
+  if (idExt.ext != '') {
     const ext = mime.lookup(idExt.ext);
     logger.debug(metaDataFragment.formats);
     logger.debug(ext);
+
     if (metaDataFragment.formats.includes(ext)) {
-      returnedFragment = convert(metaDataFragment.type, ext, returnedFragment);
       res.setHeader('Content-Type', ext);
+      returnedFragment = convert(metaDataFragment.type, ext, returnedFragment);
     } else {
       const errorResponse = createErrorResponse(415, 'Invalid extension');
       return res.status(415).json(errorResponse);
@@ -89,7 +89,7 @@ const getId = async (req, res) => {
   logger.debug('metaDataFragment.size');
   logger.debug(metaDataFragment.size);
 
-  res.status(200).send(returnedFragment);
+  return res.status(200).send(returnedFragment);
 };
 const getInfo = async (req, res) => {
   try {

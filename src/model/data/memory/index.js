@@ -1,6 +1,6 @@
 // XXX: temporary use of memory-db until we add DynamoDB
 const MemoryDB = require('../memory/memory-db');
-
+const logger = require('../../../logger');
 // Create two in-memory databases: one for fragment metadata and the other for raw data
 const data = new MemoryDB();
 const metadata = new MemoryDB();
@@ -42,6 +42,7 @@ async function listFragments(ownerId, expand = false) {
 function deleteFragment(ownerId, id) {
   return Promise.all([
     // Delete metadata
+
     metadata.del(ownerId, id),
     // Delete data
     data.del(ownerId, id),

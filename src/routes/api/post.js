@@ -14,7 +14,6 @@ module.exports = async (req, res) => {
         type: req.headers['content-type'],
         size: Buffer.byteLength(req.body),
       });
-      logger.debug(fragment);
       await fragment.save();
       await fragment.setData(req.body);
       res.setHeader('Location', `${API_URL}/v1/fragments/${fragment.id}`);

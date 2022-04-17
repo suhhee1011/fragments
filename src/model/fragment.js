@@ -133,11 +133,11 @@ class Fragment {
       return ['text/plain', 'application/json'];
     } else if (
       this.type == 'image/png' ||
-      this.type == 'image/jpg' ||
+      this.type == 'image/jpeg' ||
       this.type == 'image/webp' ||
       this.type == 'image/gif'
     ) {
-      return ['image/png', 'image/jpg', 'image/webp', 'image/gif'];
+      return ['image/png', 'image/jpeg', 'image/webp', 'image/gif'];
     }
     return [];
   }
@@ -162,7 +162,6 @@ class Fragment {
       'image/gif',
     ];
     for (let val of typeArr) {
-      console.log(val);
       if (val == value) {
         return true;
       }
