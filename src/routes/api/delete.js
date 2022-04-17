@@ -1,4 +1,3 @@
-// src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
 const { deleteFragment } = require('../../../src/model/data/index');
 
