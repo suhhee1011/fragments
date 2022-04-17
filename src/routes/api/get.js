@@ -7,7 +7,6 @@ var mime = require('mime-types');
 const path = require('path');
 var md = require('markdown-it')({ html: true });
 const sharp = require('sharp');
-const fs = require('fs');
 
 const getAllFragment = async (req, res) => {
   logger.debug(req.query.expand);
