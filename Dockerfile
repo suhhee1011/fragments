@@ -1,8 +1,8 @@
-#Stage1 - Intall node and npm libraries for production
-#Current Node version
+# Stage1 - Intall node and npm libraries for production
+# Current Node version
 FROM node:16.14-alpine@sha256:2c6c59cf4d34d4f937ddfcf33bab9d8bbad8658d1b9de7b97622566a52167f2b AS dependencies
 
-#Meta data for image
+# Meta data for image
 LABEL maintainer="Kim Suhhee <skim402@myseneca.ca>"
 LABEL description="Fragments node.js microservice"
 
@@ -28,13 +28,13 @@ COPY package.json package-lock.json ./
 # Install node dependencies defined in package-lock.json
 RUN npm ci --only=production
 ###########################################################################
-#Stage2 - Deploy - Run and start server 
+# Stage2 - Deploy - Run and start server 
 FROM node:16.14-alpine@sha256:2c6c59cf4d34d4f937ddfcf33bab9d8bbad8658d1b9de7b97622566a52167f2b AS production
-RUN apk --no-cache add curl
+RUN apk no-cache add curl
 WORKDIR /app
 
 
-#Copy from dependencies stage
+# Copy from dependencies stage
 COPY --chown=node:node --from=dependencies app/node_modules  ./node_modules 
 
 COPY --chown=node:node --from=dependencies app/package.json ./
@@ -48,7 +48,7 @@ EXPOSE 8080
 # Copy our HTPASSWD file
 COPY ./tests/.htpasswd ./tests/.htpasswd
 
-#Health Check
+# Health Check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
 CMD curl --fail localhost:8080 || exit 1
 
