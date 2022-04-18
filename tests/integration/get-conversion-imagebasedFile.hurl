@@ -28,7 +28,7 @@ GET {{url}}.png
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
 HTTP/1.1 200
-Content-Type: image/png; charset=utf-8
+Content-Type: image/png
 [Asserts]
 header "Content-Type" matches "image/png"
 
@@ -38,7 +38,7 @@ GET {{url}}.webp
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
 HTTP/1.1 200
-Content-Type: image/webp; charset=utf-8
+Content-Type: image/webp
 [Asserts]
 header "Content-Type" matches "image/webp"
 
@@ -49,7 +49,7 @@ GET {{url}}.gif
 Authorization: Basic dXNlcjFAZW1haWwuY29tOnBhc3N3b3JkMQ==
 
 HTTP/1.1 200
-Content-Type: image/gif; charset=utf-8
+Content-Type: image/gif
 [Asserts]
 header "Content-Type" matches "image/gif"
 

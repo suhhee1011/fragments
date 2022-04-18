@@ -171,7 +171,7 @@ describe('GET /v1/fragments', () => {
       .get('/v1/fragments/' + postRes.body.fragment.id + '.jpg')
       .auth('user1@email.com', 'password1');
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.headers['content-type']).toBe('image/jpeg; charset=utf-8');
+    expect(getRes.headers['content-type']).toBe('image/jpeg');
   });
 
   test('Authenticated requests of post and get/:id.ext from jpeg to png', async () => {
@@ -188,7 +188,7 @@ describe('GET /v1/fragments', () => {
       .get('/v1/fragments/' + postRes.body.fragment.id + '.png')
       .auth('user1@email.com', 'password1');
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.headers['content-type']).toBe('image/png; charset=utf-8');
+    expect(getRes.headers['content-type']).toBe('image/png');
   });
 
   test('Authenticated requests of post and get/:id.ext from jpeg to png', async () => {
@@ -205,7 +205,7 @@ describe('GET /v1/fragments', () => {
       .get('/v1/fragments/' + postRes.body.fragment.id + '.gif')
       .auth('user1@email.com', 'password1');
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.headers['content-type']).toBe('image/gif; charset=utf-8');
+    expect(getRes.headers['content-type']).toBe('image/gif');
   });
 
   test('Authenticated requests of post and get/:id.ext from jpeg to webp', async () => {
@@ -222,7 +222,7 @@ describe('GET /v1/fragments', () => {
       .get('/v1/fragments/' + postRes.body.fragment.id + '.webp')
       .auth('user1@email.com', 'password1');
     expect(getRes.statusCode).toBe(200);
-    expect(getRes.headers['content-type']).toBe('image/webp; charset=utf-8');
+    expect(getRes.headers['content-type']).toBe('image/webp');
   });
 
   test('Authenticated requests of post and get/:id/:info', async () => {
