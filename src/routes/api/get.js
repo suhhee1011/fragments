@@ -19,7 +19,7 @@ const getAllFragment = async (req, res) => {
     res.status(500).json(errorResponse);
   }
 };
-const convert = (type, ext, returnedFragment) => {
+const convert = async (type, ext, returnedFragment) => {
   if (type == 'text/markdown' && ext == 'text/html') {
     returnedFragment = md.render(returnedFragment.toString());
     returnedFragment.type = 'text/html';
@@ -37,17 +37,17 @@ const convert = (type, ext, returnedFragment) => {
     type == 'image/webp' ||
     type == 'image/gif'
   ) {
-    logger.debug(typeof returnedFragment);
+    logger.debug('type');
+    logger.debug(returnedFragment.body);
     if (ext == 'image/png') {
-      returnedFragment = sharp(returnedFragment).png().toBuffer();
+      returnedFragment = await sharp(returnedFragment).toFormat('png').toBuffer();
     } else if (ext == 'image/jpeg') {
-      returnedFragment = sharp(returnedFragment).jpeg().toBuffer();
+      returnedFragment = await sharp(returnedFragment).toFormat('jpeg').toBuffer();
     } else if (ext == 'image/webp') {
-      returnedFragment = sharp(returnedFragment).webp().toBuffer();
+      returnedFragment = await sharp(returnedFragment).toFormat('webp').toBuffer();
     } else if (ext == 'image/gif') {
-      returnedFragment = sharp(returnedFragment).gif().toBuffer();
+      returnedFragment = await sharp(returnedFragment).toFormat('gif').toBuffer();
     }
-    returnedFragment.type = ext;
   }
 
   return returnedFragment;
@@ -73,7 +73,9 @@ const getId = async (req, res) => {
 
     if (metaDataFragment.formats.includes(ext)) {
       res.setHeader('Content-Type', ext);
-      returnedFragment = convert(metaDataFragment.type, ext, returnedFragment);
+      // logger.debug(returnedFragment.toString());
+      logger.debug(Buffer.isBuffer(returnedFragment));
+      returnedFragment = await convert(metaDataFragment.type, ext, returnedFragment);
     } else {
       const errorResponse = createErrorResponse(415, 'Invalid extension');
       return res.status(415).json(errorResponse);
@@ -81,13 +83,7 @@ const getId = async (req, res) => {
   } else {
     res.setHeader('Content-Type', metaDataFragment.type);
   }
-
   res.setHeader('Content-Length', metaDataFragment.size);
-  logger.debug('metaDataFragment.type');
-  logger.debug(metaDataFragment.type);
-  logger.debug('metaDataFragment.size');
-  logger.debug(metaDataFragment.size);
-
   return res.status(200).send(returnedFragment);
 };
 const getInfo = async (req, res) => {
