@@ -1,11 +1,7 @@
-// src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
 const logger = require('../../logger');
 const { Fragment } = require('../../model/fragment');
 const API_URL = process.env.API_URL;
-/**
- * Get a list of fragments for the current user
- */
 module.exports = async (req, res) => {
   if (Buffer.isBuffer(req.body)) {
     try {

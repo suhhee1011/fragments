@@ -1,15 +1,12 @@
-// src/routes/api/get.js
 const { createSuccessResponse, createErrorResponse } = require('../../../src/response');
 const { readFragmentData } = require('../../../src/model/data/index');
 const { Fragment } = require('../../../src/model/fragment');
-const logger = require('../../logger');
 var mime = require('mime-types');
 const path = require('path');
 var md = require('markdown-it')({ html: true });
 const sharp = require('sharp');
 
 const getAllFragment = async (req, res) => {
-  logger.debug(req.query.expand);
   let checkExpand = req.query.expand === '1' ? true : false;
   try {
     const returnedFragment = await Fragment.byUser(req.user, checkExpand);
@@ -37,8 +34,6 @@ const convert = async (type, ext, returnedFragment) => {
     type == 'image/webp' ||
     type == 'image/gif'
   ) {
-    logger.debug('type');
-    logger.debug(returnedFragment.body);
     if (ext == 'image/png') {
       returnedFragment = await sharp(returnedFragment).toFormat('png').toBuffer();
     } else if (ext == 'image/jpeg') {
@@ -53,8 +48,6 @@ const convert = async (type, ext, returnedFragment) => {
   return returnedFragment;
 };
 const getId = async (req, res) => {
-  logger.debug('getID entered');
-
   let metaDataFragment;
   const idExt = path.parse(req.params.id);
   let returnedFragment = await readFragmentData(req.user, idExt.name);
@@ -68,13 +61,8 @@ const getId = async (req, res) => {
 
   if (idExt.ext != '') {
     const ext = mime.lookup(idExt.ext);
-    logger.debug(metaDataFragment.formats);
-    logger.debug(ext);
-
     if (metaDataFragment.formats.includes(ext)) {
       res.setHeader('Content-Type', ext);
-      // logger.debug(returnedFragment.toString());
-      logger.debug(Buffer.isBuffer(returnedFragment));
       returnedFragment = await convert(metaDataFragment.type, ext, returnedFragment);
     } else {
       const errorResponse = createErrorResponse(415, 'Invalid extension');

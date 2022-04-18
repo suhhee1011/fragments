@@ -4,9 +4,6 @@ const { PutCommand, GetCommand, QueryCommand, DeleteCommand } = require('@aws-sd
 const logger = require('../../../logger');
 const { createErrorResponse } = require('../../../../src/response');
 const { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
-// Create two in-memory databases: one for fragment metadata and the other for raw data
-// const data = new MemoryDB();
-// const metadata = new MemoryDB();
 
 // Writes a fragment to DynamoDB. Returns a Promise.
 function writeFragment(fragment) {
@@ -53,7 +50,6 @@ async function readFragment(ownerId, id) {
 // Writes a fragment's data to an S3 Object in a Bucket
 // https://github.com/awsdocs/aws-sdk-for-javascript-v3/blob/main/doc_source/s3-example-creating-buckets.md#upload-an-existing-object-to-an-amazon-s3-bucket
 async function writeFragmentData(ownerId, id, data) {
-  logger.debug('post-entered in S3');
   // Create the PUT API params from our details
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
@@ -63,7 +59,6 @@ async function writeFragmentData(ownerId, id, data) {
   };
   // Create a PUT Object command to send to S3
   const command = new PutObjectCommand(params);
-
   try {
     // Use our client to send the command
     await s3Client.send(command);
@@ -99,25 +94,16 @@ const streamToBuffer = (stream) =>
 // Reads a fragment's data from S3 and returns (Promise<Buffer>)
 // https://github.com/awsdocs/aws-sdk-for-javascript-v3/blob/main/doc_source/s3-example-creating-buckets.md#getting-a-file-from-an-amazon-s3-bucket
 async function readFragmentData(ownerId, id) {
-  logger.debug('get-entered in S3');
-  logger.debug(ownerId);
-  logger.debug(id);
-  // Create the PUT API params from our details
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,
     // Our key will be a mix of the ownerID and fragment id, written as a path
     Key: `${ownerId}/${id}`,
   };
 
-  // Create a GET Object command to send to S3
   const command = new GetObjectCommand(params);
 
   try {
-    logger.debug('I am here!!');
-    // Get the object from the Amazon S3 bucket. It is returned as a ReadableStream.
     const data = await s3Client.send(command);
-    // Convert the ReadableStream to a Buffer
-    logger.debug('I am here too!!');
     return streamToBuffer(data.Body);
   } catch (err) {
     if (err.Code == 'NoSuchKey') {

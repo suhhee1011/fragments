@@ -7,12 +7,8 @@ const logger = require('../../logger');
 const deleteById = async (req, res) => {
   const idExt = path.parse(req.params.id);
   try {
-    logger.debug(idExt);
-    logger.debug(idExt.name);
     let returnedFragment = await deleteFragment(req.user, idExt.name);
-    console.log(returnedFragment);
     logger.debug(returnedFragment);
-
     const successResponse = createSuccessResponse('deleted');
     return res.status(200).json(successResponse);
   } catch {
